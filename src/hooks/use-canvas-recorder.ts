@@ -7,14 +7,14 @@ import pointsMusic from "../assets/bubblePopMusic.mp3";
 import { getSeekableWebM } from "../utils/helpers";
 
 const types = [
-  // "video/x-matroska;codecs=avc1",
-  // "video/webm;codecs=h264",
+  "video/x-matroska;codecs=avc1",
+  "video/webm;codecs=h264",
   "video/webm",
-  // "video/webm,codecs=vp9",
-  // "video/vp8",
+  "video/webm,codecs=vp9",
+  "video/vp8",
   "video/webm;codecs=vp8",
-  // "video/webm;codecs=daala",
-  // "video/mpeg",
+  "video/webm;codecs=daala",
+  "video/mpeg",
 ];
 
 type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<
@@ -37,7 +37,6 @@ const useCanvasRecorder = (
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [superBlob, setSuperBlob] = useState<Blob | null>(null);
 
   const [type, setType] = useState<ElementType<typeof types>>();
 
@@ -100,18 +99,12 @@ const useCanvasRecorder = (
       );
 
       mediaRecorder.ondataavailable = handleDataAvailable;
-      mediaRecorder.onstop = handleMediaRecorderStop;
-      mediaRecorder.start(1000); // collect 100ms of data blobs
+      mediaRecorder.start(100); // collect 100ms of data blobs
 
       setMediaRecorder(mediaRecorder);
     } catch (e) {
       console.error(e);
     }
-  };
-
-  const handleMediaRecorderStop = () => {
-    const superblob = new Blob([...recordedBlobs.current], { type });
-    setSuperBlob(superblob);
   };
 
   const stopRecording = () => {
@@ -132,9 +125,9 @@ const useCanvasRecorder = (
     try {
       console.log("Getting blobs...", recordedBlobs.current);
       const superblob = new Blob([...recordedBlobs.current], { type });
-      // const arrayBuffer = await superblob.arrayBuffer();
-      // console.log("Got arrayBuffer", arrayBuffer);
-      // if (arrayBuffer) return getSeekableWebM(arrayBuffer);
+      const arrayBuffer = await superblob.arrayBuffer();
+      console.log("Got arrayBuffer", arrayBuffer);
+      if (arrayBuffer) return getSeekableWebM(arrayBuffer);
       return superblob;
     } catch (e) {
       console.error(e);
@@ -148,7 +141,6 @@ const useCanvasRecorder = (
   };
 
   return {
-    superBlob,
     startRecording,
     stopRecording,
     download,

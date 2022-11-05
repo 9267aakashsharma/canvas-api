@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import Konva from "konva";
 import React, { useEffect, useLayoutEffect, useRef } from "react";
-import { Group, Image } from "react-konva";
+import RoundedImage from "./RoundedImage";
 
 const UserMedia = ({
   x,
@@ -14,6 +14,7 @@ const UserMedia = ({
   y: number;
   width: number;
   height: number;
+  cornerRadius: number;
   stream: MediaStream | null;
 }) => {
   const imageRef = useRef<Konva.Image | null>(null);
@@ -49,17 +50,18 @@ const UserMedia = ({
     ref.current.srcObject = stream;
   }, [ref.current]);
 
+  if (!videoElement || !stream) return null;
+
   return (
-    <>
-      <Group x={x} y={y} offsetX={width}>
-        <Image
-          ref={imageRef}
-          image={videoElement}
-          width={width}
-          height={height}
-        />
-      </Group>
-    </>
+    <RoundedImage
+      ref={imageRef}
+      image={videoElement}
+      width={width}
+      height={height}
+      cornerRadius={10}
+      x={x}
+      y={y}
+    />
   );
 };
 
